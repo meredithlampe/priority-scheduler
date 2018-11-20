@@ -75,11 +75,9 @@ function createPicker() {
 // A simple callback implementation.
 function pickerCallback(data) {
   if (data.action == google.picker.Action.PICKED) {
-    console.log("picked file");
     var fileId = data.docs[0].id;
     gapi.load('client', function(resp) {
-      console.log("printing file id" + fileId);
-      printFile(fileId);
+      downloadFile(fileId);
     });
   }
 }
@@ -109,4 +107,21 @@ function printFile(fileId) {
         console.log('MIME type: ' + resp.mimeType);
       });
     });
+}
+
+function downloadFile(fileId) {
+  var accessToken = oauthToken;
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'https://www.googleapis.com/drive/v2/files/' + fileId + "/export?mimeType=text/csv");
+    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+    xhr.onload = function() {
+      console.log(xhr.responseText);
+      var data = Papa.parse(xhr.responseText);
+      console.log("data: ");
+      console.log(data);
+    };
+    xhr.onerror = function() {
+      console.log('error downloading file');
+    };
+    xhr.send();
 }
