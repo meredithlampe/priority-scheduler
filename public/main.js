@@ -28,6 +28,7 @@ function showSelectAppointmentsFileButton() {
 function loadPicker() {
   gapi.load('auth', {'callback': onAuthApiLoad});
   gapi.load('picker', {'callback': onPickerApiLoad});
+
 }
 
 function onAuthApiLoad() {
@@ -52,7 +53,7 @@ function handleAuthResult(authResult) {
   }
 }
 
-// Create and render a Picker object for searching images.
+// Create and render a Picker object
 function createPicker() {
   if (pickerApiLoaded && oauthToken) {
     var view = new google.picker.View(google.picker.ViewId.DOCS);
@@ -74,7 +75,38 @@ function createPicker() {
 // A simple callback implementation.
 function pickerCallback(data) {
   if (data.action == google.picker.Action.PICKED) {
+    console.log("picked file");
     var fileId = data.docs[0].id;
-    alert('The user selected: ' + fileId);
+    gapi.load('client', function(resp) {
+      console.log("printing file id" + fileId);
+      printFile(fileId);
+    });
   }
+}
+
+/**
+ * Print a file's metadata.
+ *
+ * @param {String} fileId ID of the file to print metadata for.
+ */
+function printFile(fileId) {
+   gapi.client.init(
+    {
+      apiKey: developerKey,
+      discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+      clientId: clientId,
+      scope: 'https://www.googleapis.com/auth/drive.readonly'
+    }).then(function() {
+      console.log("loaded drive api");
+      var request = gapi.client.drive.files.get({
+        'fileId': fileId
+      });
+      request.execute(function(resp) {
+        if (resp.error) {
+          alert(resp.message);
+        }
+        console.log('Title: ' + resp.name);
+        console.log('MIME type: ' + resp.mimeType);
+      });
+    });
 }
