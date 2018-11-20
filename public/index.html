@@ -40,10 +40,14 @@
     <section id="page-splash">
       <h3 class="logo">Priority Scheduler</h3>
       <div>
-        <button id="sign-in-button" class="mdl-button--raised mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i> Sign in with Google</button>
+        <button visibility="none" id="select-appointments-file-button" class="mdl-button--raised mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">account_circle</i>Select Appointments File</button>
       </div>
     </section>
+    <div id="result"></div>
   </div>
-  <!-- <script src="main.js"></script> -->
+  <script src="main.js"></script>
+
+  <!-- The Google API Loader script. -->
+  <script type="text/javascript" src="https://apis.google.com/js/api.js?onload=showSelectAppointmentsFileButton"></script>
 </body>
 </html>
