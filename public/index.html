@@ -40,15 +40,17 @@
   <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <!-- Splash screen -->
     <section id="page-splash">
-      <h3 class="logo">Schedule Appointments</h3>
-      <div class="content-container">
-        <div class="content-child show file_selector_container">
-          <div class="file-selector-button">
-            <button visibility="none" id="select-appointments-file-button" class="mdl-button--raised mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">library_add</i>Select Appointments File</button>
+      <div class="all-container">
+        <h3 class="logo schedule-header">Schedule Appointments</h3>
+        <div class="content-container">
+          <div class="content-child show file_selector_container">
+            <div class="file-selector-button">
+              <button visibility="none" id="select-appointments-file-button" class="mdl-button--raised mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">library_add</i>Select Appointments File</button>
+            </div>
+            <div class="selected-file-name-container"></div>
           </div>
-          <div id="selected-file-name-container"></div>
+          <div class="content-child processing-appointments-container"></div>
         </div>
-        <div class="content-child processing-appointments-container"></div>
       </div>
     </section>
     <div id="result"></div>

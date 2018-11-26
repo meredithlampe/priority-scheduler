@@ -24,6 +24,7 @@ function showSelectAppointmentsFileButton() {
   signInButton.onclick = loadPicker;
   // signInButton.onclick = function() {
   //   addProcessingAppointmentsText("287");
+  //   appendFileName('kelli booking 2018 2018');
   // }
 }
 
@@ -81,11 +82,9 @@ function pickerCallback(data) {
     var fileId = data.docs[0].id;
     gapi.load('client', function(resp) {
       downloadFile(fileId, function(xhr) {
-        console.log(xhr.responseText);
         var data = Papa.parse(xhr.responseText, {
           header: true
         });
-        console.log("data: ");
         console.log(data);
         showSelectedFileName(fileId);
         processAppointmentsFile(data);
@@ -100,11 +99,12 @@ function processAppointmentsFile(appointmentData) {
 }
 
 function addProcessingAppointmentsText(countAppointments) {
+     $('.all-container').css('margin-top', -120);
     setTimeout(function() {
       const container = $('.processing-appointments-container');
       container.append('<div>Found ' + countAppointments + ' appointments to process');   
       container.addClass('show');
-    }, 120);
+    }, 3000);
 }
 
 /**
@@ -131,10 +131,15 @@ function showSelectedFileName(fileId) {
 }
 
 function appendFileName(name) {
-    const selectedFileDiv = $('#selected-file-name-container');
-    if (selectedFileDiv) {
-      selectedFileDiv.append('<div id="selected-file-name">' + name + "</div>");
-    }
+  // widen container
+  $('.file_selector_container').css('width', '600px');
+  const selectedFileDiv = $('.selected-file-name-container');
+  if (selectedFileDiv) {
+    setTimeout(function () {
+      selectedFileDiv.append('<div id="selected-file-name">' + name + "</div>");  
+      selectedFileDiv.addClass('show');
+    }, 1500);
+  }
 }
 
 function downloadFile(fileId, successCallback) {

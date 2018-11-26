@@ -435,16 +435,28 @@ a {
     background: radial-gradient(circle, hsl(0, 0%, 94%), rgb(193, 193, 193));
     z-index: 100;
     display: flex;
-    justify-content: center;
     align-items: center;
     color: #424242;
     flex-direction: column;
 }
 
+.all-container {
+    position: absolute;
+    top: 50%;
+    margin-top: -100px;
+    transition: margin .5s, width 2s;    
+}
+
+.schedule-header {
+    text-align: center;
+}
+
 .content-container {
     display: flex;
     flex-direction: column;
-    transition: all 0.4s ease-out;
+    transition: height 2s, width 2s;
+    width: fit-content;
+    margin: auto;
 }
 
 .content-child {
@@ -463,17 +475,27 @@ a {
 .file_selector_container {
     display: flex;
     flex-direction: row;
+    /*width: fit-content;*/
+    width: 300px;
+    transition: width 2s;
+
 }
 
-#selected-file {
-    background: red;
-}
-
-#selected-file-name-container {
+.selected-file-name-container {
     color: gray;
     height: 36px; /*same as button height */
     display: table;
     overflow: hidden;
+      transition: all 1.5s ease-out;
+      opacity: 0;
+}
+
+.selected-file-name-container.show {
+    opacity: 1;
+}
+
+.content-child.show {
+  opacity: 1;
 }
 
 .processing-appointments-container {
