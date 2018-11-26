@@ -441,6 +441,25 @@ a {
     flex-direction: column;
 }
 
+.content-container {
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s ease-out;
+}
+
+.content-child {
+    margin: 20px;
+}
+
+.content-child {
+  transition: all 1.5s ease-out;
+  opacity: 0;
+}
+
+.content-child.show {
+  opacity: 1;
+}
+
 .file_selector_container {
     display: flex;
     flex-direction: row;
@@ -455,6 +474,10 @@ a {
     height: 36px; /*same as button height */
     display: table;
     overflow: hidden;
+}
+
+.processing-appointments-container {
+    padding-left: 10px;
 }
 
 #selected-file-name {

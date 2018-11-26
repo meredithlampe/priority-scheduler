@@ -41,11 +41,14 @@
     <!-- Splash screen -->
     <section id="page-splash">
       <h3 class="logo">Schedule Appointments</h3>
-      <div class="file_selector_container">
-        <div class="file-selector-button">
-          <button visibility="none" id="select-appointments-file-button" class="mdl-button--raised mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">library_add</i>Select Appointments File</button>
+      <div class="content-container">
+        <div class="content-child show file_selector_container">
+          <div class="file-selector-button">
+            <button visibility="none" id="select-appointments-file-button" class="mdl-button--raised mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">library_add</i>Select Appointments File</button>
+          </div>
+          <div id="selected-file-name-container"></div>
         </div>
-        <div id="selected-file-name-container"/>
+        <div class="content-child processing-appointments-container"></div>
       </div>
     </section>
     <div id="result"></div>

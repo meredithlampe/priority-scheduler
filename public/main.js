@@ -22,6 +22,9 @@ var oauthToken;
 function showSelectAppointmentsFileButton() {
   signInButton.visibility = "visible";
   signInButton.onclick = loadPicker;
+  // signInButton.onclick = function() {
+  //   addProcessingAppointmentsText("287");
+  // }
 }
 
 // Use the Google API Loader script to load the google.picker script.
@@ -85,9 +88,23 @@ function pickerCallback(data) {
         console.log("data: ");
         console.log(data);
         showSelectedFileName(fileId);
+        processAppointmentsFile(data);
       });
     });
   }
+}
+
+function processAppointmentsFile(appointmentData) {
+  const countAppointments = appointmentData.data.length - 1; // first entry is header
+  addProcessingAppointmentsText(countAppointments);
+}
+
+function addProcessingAppointmentsText(countAppointments) {
+    setTimeout(function() {
+      const container = $('.processing-appointments-container');
+      container.append('<div>Found ' + countAppointments + ' appointments to process');   
+      container.addClass('show');
+    }, 120);
 }
 
 /**
