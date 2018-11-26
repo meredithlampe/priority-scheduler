@@ -77,51 +77,59 @@ function pickerCallback(data) {
   if (data.action == google.picker.Action.PICKED) {
     var fileId = data.docs[0].id;
     gapi.load('client', function(resp) {
-      downloadFile(fileId);
+      downloadFile(fileId, function(xhr) {
+        console.log(xhr.responseText);
+        var data = Papa.parse(xhr.responseText, {
+          header: true
+        });
+        console.log("data: ");
+        console.log(data);
+        showSelectedFileName(fileId);
+      });
     });
   }
 }
 
 /**
- * Print a file's metadata.
+ * Show selected file name next to selector button
  *
- * @param {String} fileId ID of the file to print metadata for.
+ * @param {String} fileId ID of the file to show.
  */
-function printFile(fileId) {
-   gapi.client.init(
-    {
-      apiKey: developerKey,
-      discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
-      clientId: clientId,
-      scope: 'https://www.googleapis.com/auth/drive.readonly'
-    }).then(function() {
-      console.log("loaded drive api");
-      var request = gapi.client.drive.files.get({
-        'fileId': fileId
-      });
-      request.execute(function(resp) {
-        if (resp.error) {
-          alert(resp.message);
-        }
-        console.log('Title: ' + resp.name);
-        console.log('MIME type: ' + resp.mimeType);
-      });
-    });
+function showSelectedFileName(fileId) {
+   var accessToken = oauthToken;
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'https://www.googleapis.com/drive/v2/files/' + fileId);
+  xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+  xhr.onload = function() {
+    const response = xhr.responseText;
+    if (response) {
+     var data = JSON.parse(response);
+      appendFileName(data.title);
+    }
+  };
+  xhr.onerror = function() {
+    console.log('error getting file metadata');
+  };
+  xhr.send();
 }
 
-function downloadFile(fileId) {
+function appendFileName(name) {
+    const selectedFileDiv = $('#selected-file-name-container');
+    if (selectedFileDiv) {
+      selectedFileDiv.append('<div id="selected-file-name">' + name + "</div>");
+    }
+}
+
+function downloadFile(fileId, successCallback) {
   var accessToken = oauthToken;
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://www.googleapis.com/drive/v2/files/' + fileId + "/export?mimeType=text/csv");
-    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
-    xhr.onload = function() {
-      console.log(xhr.responseText);
-      var data = Papa.parse(xhr.responseText);
-      console.log("data: ");
-      console.log(data);
-    };
-    xhr.onerror = function() {
-      console.log('error downloading file');
-    };
-    xhr.send();
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'https://www.googleapis.com/drive/v2/files/' + fileId + "/export?mimeType=text/csv");
+  xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+  xhr.onload = function() {
+    successCallback(xhr);
+  };
+  xhr.onerror = function() {
+    console.log('error downloading file');
+  };
+  xhr.send();
 }
