@@ -96,6 +96,8 @@ function pickerCallback(data) {
 function processAppointmentsFile(appointmentData) {
   const countAppointments = appointmentData.data.length - 1; // first entry is header
   addProcessingAppointmentsText(countAppointments);
+  let apptsByPriority = groupAppointmentsByPriority(appointmentData);
+  addAppointmentsByPriorityText(apptsByPriority);
 }
 
 function addProcessingAppointmentsText(countAppointments) {
@@ -105,6 +107,34 @@ function addProcessingAppointmentsText(countAppointments) {
       container.append('<div>Found ' + countAppointments + ' appointments to process');   
       container.addClass('show');
     }, 3000);
+}
+
+function groupAppointmentsByPriority(appointmentData) {
+  const apptsByPriority = new Map();
+  appointmentData.data.forEach(function(datum) {
+    let priority = datum.priority;
+    if (!priority) {
+      priority = Math.floor(Math.random() * 5);
+    }
+    let appointmentsForPriority = apptsByPriority.get(priority);
+    if (!appointmentsForPriority) {
+      appointmentsForPriority = [];
+    }
+    appointmentsForPriority[appointmentsForPriority.length] = datum;
+    apptsByPriority.set(priority, appointmentsForPriority);
+  });
+  return new Map([...apptsByPriority.entries()].sort());
+}
+
+function addAppointmentsByPriorityText(apptsByPriority) {
+  setTimeout(function() {
+    $('.all-container').css('margin-top', -140);
+    const container = $('.appointments-by-priority-container');
+    apptsByPriority.forEach(function(listOfAppointments, priority) {
+      container.append('<div>Priority ' + priority + ' appointments: ' + listOfAppointments.length + '</div>');   
+    });
+    container.addClass('show');
+  }, 4000);
 }
 
 /**

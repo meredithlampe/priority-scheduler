@@ -468,6 +468,10 @@ a {
   opacity: 0;
 }
 
+.step {
+  padding-left: 10px;
+}
+
 .content-child.show {
   opacity: 1;
 }
@@ -496,10 +500,6 @@ a {
 
 .content-child.show {
   opacity: 1;
-}
-
-.processing-appointments-container {
-    padding-left: 10px;
 }
 
 #selected-file-name {
