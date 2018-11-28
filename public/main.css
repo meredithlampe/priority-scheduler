@@ -459,21 +459,24 @@ a {
     margin: auto;
 }
 
-.content-child {
-    margin: 20px;
-}
-
-.content-child {
+.start-hidden {
   transition: all 1.5s ease-out;
   opacity: 0;
 }
 
-.step {
-  padding-left: 10px;
+.start-hidden.show {
+    opacity: 1;
 }
-
-.content-child.show {
-  opacity: 1;
+.steps {
+    padding-left: 10px;
+}
+.step-header {
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+.step-text {
+    color: #6969698a;
+    margin-bottom: 20px;
 }
 
 .file_selector_container {
@@ -482,11 +485,12 @@ a {
     /*width: fit-content;*/
     width: 300px;
     transition: width 2s;
-
+    margin-top: 20px;
+    margin-bottom: 40px;
 }
 
 .selected-file-name-container {
-    color: gray;
+    color: #6969698a;
     height: 36px; /*same as button height */
     display: table;
     overflow: hidden;

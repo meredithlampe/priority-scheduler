@@ -43,14 +43,18 @@
       <div class="all-container">
         <h3 class="logo schedule-header">Schedule Appointments</h3>
         <div class="content-container">
-          <div class="content-child show file_selector_container">
+          <div class="show file_selector_container">
             <div class="file-selector-button">
               <button visibility="none" id="select-appointments-file-button" class="mdl-button--raised mdl-button mdl-js-button mdl-js-ripple-effect"><i class="material-icons">library_add</i>Select Appointments File</button>
             </div>
             <div class="selected-file-name-container"></div>
           </div>
-          <div class="content-child step processing-appointments-container"></div>
-          <div class="content-child step appointments-by-priority-container"></div>
+          <div class="steps">
+            <div class="start-hidden step-header processing-appointments-container">
+            </div>
+            <div class="start-hidden step-text appointments-by-priority-container"></div>
+            <div class="start-hidden step-header scheduling-appointments-container"></div>
+          </div>
         </div>
       </div>
     </section>

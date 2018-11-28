@@ -98,13 +98,14 @@ function processAppointmentsFile(appointmentData) {
   addProcessingAppointmentsText(countAppointments);
   let apptsByPriority = groupAppointmentsByPriority(appointmentData);
   addAppointmentsByPriorityText(apptsByPriority);
+  scheduleAppointmentsByPriority(apptsByPriority);
 }
 
 function addProcessingAppointmentsText(countAppointments) {
      $('.all-container').css('margin-top', -120);
     setTimeout(function() {
       const container = $('.processing-appointments-container');
-      container.append('<div>Found ' + countAppointments + ' appointments to process');   
+      container.append('<div>Found ' + countAppointments + ' appointments');   
       container.addClass('show');
     }, 3000);
 }
@@ -128,13 +129,27 @@ function groupAppointmentsByPriority(appointmentData) {
 
 function addAppointmentsByPriorityText(apptsByPriority) {
   setTimeout(function() {
-    $('.all-container').css('margin-top', -140);
+    $('.all-container').css('margin-top', -180);
     const container = $('.appointments-by-priority-container');
     apptsByPriority.forEach(function(listOfAppointments, priority) {
       container.append('<div>Priority ' + priority + ' appointments: ' + listOfAppointments.length + '</div>');   
     });
     container.addClass('show');
   }, 4000);
+}
+
+function scheduleAppointmentsByPriority(apptsByPriority) {
+  addSchedulingText();
+  // do scheduling here!
+}
+
+function addSchedulingText() {
+  setTimeout(function() {
+    $('.all-container').css('margin-top', -200);
+    const container = $('.scheduling-appointments-container');
+    container.append('<div>Scheduling...</div>');   
+    container.addClass('show');
+    }, 5000);
 }
 
 /**
