@@ -139,9 +139,42 @@ function addAppointmentsByPriorityText(apptsByPriority) {
 }
 
 function scheduleAppointmentsByPriority(apptsByPriority) {
+  debugger;
   addSchedulingText();
+  const scheduledAppointments = new Map();
+  let slots = [];
+  let firstApplicant = apptsByPriority.get(0)[0];
+  for (var cellHeader in firstApplicant) {
+    if (firstApplicant.hasOwnProperty(cellHeader) && cellHeader.includes('please check off all')) {
+      slots[slots.length] = cellHeader;
+    }
+  }
+  console.log(slots);
+
   apptsByPriority.forEach(function(applicantList, priority) {
     let shuffledAppointments = shuffle(applicantList);
+    const availabilities = new Map();
+    shuffledAppointments.forEach(function(applicant) {
+      for (var cellHeader in applicant) {
+        if (applicant.hasOwnProperty(cellHeader) 
+          && cellHeader.includes('please check off all')
+          && applicant[cellHeader] !== "") {
+          // add applicant as available for this time
+          let prevAvailabilities = availabilities.get(cellHeader);
+          if (!prevAvailabilities) {
+            prevAvailabilities = [];
+          }
+          prevAvailabilities[prevAvailabilities.length] = applicant['Submission ID'];
+          availabilities.set(cellHeader, prevAvailabilities);
+        }
+      }
+    });
+    // availabilities contains all submission ids available for each time slot
+    let continue = true;
+    while (continue) {
+      // find slot with least people available
+      
+    }
   });
 }
 
