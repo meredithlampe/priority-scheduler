@@ -116,6 +116,7 @@ function groupAppointmentsByPriority(appointmentData) {
     let priority = datum.priority;
     if (!priority) {
       priority = Math.floor(Math.random() * 5);
+      datum.priority = priority;
     }
     let appointmentsForPriority = apptsByPriority.get(priority);
     if (!appointmentsForPriority) {
@@ -139,7 +140,6 @@ function addAppointmentsByPriorityText(apptsByPriority) {
 }
 
 function scheduleAppointmentsByPriority(apptsByPriority) {
-  debugger;
   addSchedulingText();
   const scheduledAppointments = new Map();
   let slots = [];
@@ -164,18 +164,75 @@ function scheduleAppointmentsByPriority(apptsByPriority) {
           if (!prevAvailabilities) {
             prevAvailabilities = [];
           }
-          prevAvailabilities[prevAvailabilities.length] = applicant['Submission ID'];
+          prevAvailabilities[prevAvailabilities.length] = applicant;
           availabilities.set(cellHeader, prevAvailabilities);
         }
       }
     });
-    // availabilities contains all submission ids available for each time slot
-    let continue = true;
-    while (continue) {
-      // find slot with least people available
-      
+    while (availabilities.size > 0) {
+      // availabilities contains all submission ids available for each time slot
+      // sort according to how many people are available for each slot, ascending
+      let sortedAvailabilities =
+        Array
+          .from(availabilities)
+          .sort((a, b) => {
+            // a[0], b[0] is the key of the map
+            return a[1].length - b[1].length;
+          });
+      // get first (least people available) slot
+      let slot = sortedAvailabilities[0][0]; // time of slot, as a string
+
+      // if slot doesn't have any people that are available for it, get rid of it
+      if (sortedAvailabilities[0][1].length === 0) {
+        availabilities.delete(slot);
+        continue;
+      }
+
+      let availabilitiesForSlot = 
+        sortedAvailabilities[0][1] // get first tuple, then get values (applicants)
+          .sort((a, b) => {
+            // sort by earliest submission
+            if (a['Submission Date'] > b['Submission Date']) {
+              return 1;
+            } else {
+              return -1;
+            }
+          });
+      // availabilities are sorted according to submission date and time
+      let chosenAppointment = availabilitiesForSlot[0];
+
+      // for this slot, pick the  highest priority person who applied the earliest
+      scheduledAppointments.set(slot, chosenAppointment);
+
+      // remove slot from list, as it has now been filled
+      availabilities.delete(slot);
+
+      // remove person from the remaining list of applicants
+      availabilities.forEach(function(slot, applicants) {
+        let foundApplicant = false;
+        let indexInApplicantsList = 0;
+        while (!foundApplicant && indexInApplicantsList < applicants.length) {
+          if (applicants[indexInApplicantsList]['Submission ID'] === chosenAppointment['Submission ID']) {
+            applicants.splice(indexInApplicantsList, 1);
+            foundApplicant = true;
+          }
+          indexInApplicantsList++;
+        }
+      });
     }
   });
+
+  // after scheduling is complete, count how many we were able to schedule
+  let countPrioritiesScheduled = new Map();
+  scheduledAppointments.forEach(function(appointment, slot) {
+    let count = countPrioritiesScheduled.get(appointment.priority);
+    if (!count) {
+      count = 0;
+    }
+    count++;
+    countPrioritiesScheduled.set(appointment.priority, count);
+  });
+  debugger;
 }
 
 /**
