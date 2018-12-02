@@ -100,7 +100,8 @@ function processAppointmentsFile(appointmentData) {
   console.log("Appointments grouped by priority");
   console.log(apptsByPriority);
   addAppointmentsByPriorityText(apptsByPriority);
-  scheduleAppointmentsByPriority(apptsByPriority);
+  let scheduledAppointments = scheduleAppointmentsByPriority(apptsByPriority);
+  showFollowupOptions(scheduledAppointments);
 }
 
 function addProcessingAppointmentsText(countAppointments) {
@@ -258,6 +259,18 @@ function scheduleAppointmentsByPriority(apptsByPriority) {
     $('.priority-scheduled').addClass('show');
     $('.scheduling-appointments-container-done').text('Done').addClass('show');
   }, 6500);
+
+  return scheduledAppointments;
+}
+
+function showFollowupOptions(scheduledAppointments) {
+  setTimeout(function() {
+    $('.all-container').css('margin-top', -220);
+    $('.followups').css('display', 'flex');
+  }, 7000);
+  setTimeout(function() {
+    $('.followups').addClass('show');
+  }, 8000)
 }
 
 /**

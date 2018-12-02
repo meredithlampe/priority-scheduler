@@ -209,6 +209,14 @@ a {
 #select-appointments-file-button .material-icons {
     margin-right: 10px;
 }
+#export-pdf-button {
+    margin-left: 10px;
+    color: inherit;
+    font-family: 'IBM Plex Sans', sans-serif;
+}
+#export-pdf-button .material-icons {
+    margin-right: 10px;
+}
 #sign-out-button {
     margin: 10px;
     color: inherit;
