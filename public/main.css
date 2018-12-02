@@ -511,3 +511,14 @@ a {
     display: table-cell;
     vertical-align: middle;
 }
+
+.priority-scheduled {
+    color: #424242;
+    font-style: bold;
+    margin-left: 20px;
+}
+
+.priority-container {
+    display: flex;
+    flex-direction: row;
+}

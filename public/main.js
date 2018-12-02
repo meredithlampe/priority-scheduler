@@ -97,6 +97,8 @@ function processAppointmentsFile(appointmentData) {
   const countAppointments = appointmentData.data.length - 1; // first entry is header
   addProcessingAppointmentsText(countAppointments);
   let apptsByPriority = groupAppointmentsByPriority(appointmentData);
+  console.log("Appointments grouped by priority");
+  console.log(apptsByPriority);
   addAppointmentsByPriorityText(apptsByPriority);
   scheduleAppointmentsByPriority(apptsByPriority);
 }
@@ -133,7 +135,12 @@ function addAppointmentsByPriorityText(apptsByPriority) {
     $('.all-container').css('margin-top', -180);
     const container = $('.appointments-by-priority-container');
     apptsByPriority.forEach(function(listOfAppointments, priority) {
-      container.append('<div>Priority ' + priority + ' appointments: ' + listOfAppointments.length + '</div>');   
+      container.append(
+        '<div class="priority-' + priority + '-container priority-container">' +
+          '<div class="priority-' + priority + '-appointments">' + 
+            'Priority ' + priority + ' appointments: ' + listOfAppointments.length + 
+          '</div>' + 
+        '</div>');
     });
     container.addClass('show');
   }, 4000);
@@ -149,16 +156,19 @@ function scheduleAppointmentsByPriority(apptsByPriority) {
       slots[slots.length] = cellHeader;
     }
   }
+  console.log("all possible slots:");
   console.log(slots);
 
   apptsByPriority.forEach(function(applicantList, priority) {
+    console.log("Priority: " + priority);
     let shuffledAppointments = shuffle(applicantList);
     const availabilities = new Map();
     shuffledAppointments.forEach(function(applicant) {
       for (var cellHeader in applicant) {
         if (applicant.hasOwnProperty(cellHeader) 
           && cellHeader.includes('please check off all')
-          && applicant[cellHeader] !== "") {
+          && applicant[cellHeader] !== ""
+          && !scheduledAppointments.get(cellHeader)) {
           // add applicant as available for this time
           let prevAvailabilities = availabilities.get(cellHeader);
           if (!prevAvailabilities) {
@@ -169,6 +179,8 @@ function scheduleAppointmentsByPriority(apptsByPriority) {
         }
       }
     });
+    console.log("Applicant availabilities by slot: ");
+    console.log(availabilities);
     while (availabilities.size > 0) {
       // availabilities contains all submission ids available for each time slot
       // sort according to how many people are available for each slot, ascending
@@ -208,7 +220,7 @@ function scheduleAppointmentsByPriority(apptsByPriority) {
       availabilities.delete(slot);
 
       // remove person from the remaining list of applicants
-      availabilities.forEach(function(slot, applicants) {
+      availabilities.forEach(function(applicants, slot) {
         let foundApplicant = false;
         let indexInApplicantsList = 0;
         while (!foundApplicant && indexInApplicantsList < applicants.length) {
@@ -220,6 +232,8 @@ function scheduleAppointmentsByPriority(apptsByPriority) {
         }
       });
     }
+    console.log("Appointments scheduled for priority " + priority);
+    console.log(scheduledAppointments);
   });
 
   // after scheduling is complete, count how many we were able to schedule
@@ -232,7 +246,18 @@ function scheduleAppointmentsByPriority(apptsByPriority) {
     count++;
     countPrioritiesScheduled.set(appointment.priority, count);
   });
-  debugger;
+
+  setTimeout(function() {
+    countPrioritiesScheduled.forEach(function(count, priority) {
+      let elem = $('.priority-' + priority + '-container');
+       elem.append('     <div class="start-hidden priority-scheduled">' + count + ' scheduled</div>');
+      });
+  }, 6000);
+
+  setTimeout(function() {
+    $('.priority-scheduled').addClass('show');
+    $('.scheduling-appointments-container-done').text('Done').addClass('show');
+  }, 6500);
 }
 
 /**
@@ -251,7 +276,7 @@ function addSchedulingText() {
   setTimeout(function() {
     $('.all-container').css('margin-top', -200);
     const container = $('.scheduling-appointments-container');
-    container.append('<div>Scheduling...</div>');   
+    container.append('<div class="scheduling">Scheduling...</div>');   
     container.addClass('show');
     }, 5000);
 }
