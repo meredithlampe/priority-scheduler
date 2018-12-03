@@ -19,6 +19,8 @@ var scope = ['https://www.googleapis.com/auth/drive'];
 var pickerApiLoaded = false;
 var oauthToken;
 
+var scheduledAppointmentsGLOBAL = null;
+
 function showSelectAppointmentsFileButton() {
   signInButton.visibility = "visible";
   signInButton.onclick = loadPicker;
@@ -85,7 +87,6 @@ function pickerCallback(data) {
         var data = Papa.parse(xhr.responseText, {
           header: true
         });
-        console.log(data);
         showSelectedFileName(fileId);
         processAppointmentsFile(data);
       });
@@ -97,8 +98,6 @@ function processAppointmentsFile(appointmentData) {
   const countAppointments = appointmentData.data.length - 1; // first entry is header
   addProcessingAppointmentsText(countAppointments);
   let apptsByPriority = groupAppointmentsByPriority(appointmentData);
-  console.log("Appointments grouped by priority");
-  console.log(apptsByPriority);
   addAppointmentsByPriorityText(apptsByPriority);
   let scheduledAppointments = scheduleAppointmentsByPriority(apptsByPriority);
   showFollowupOptions(scheduledAppointments);
@@ -157,11 +156,8 @@ function scheduleAppointmentsByPriority(apptsByPriority) {
       slots[slots.length] = cellHeader;
     }
   }
-  console.log("all possible slots:");
-  console.log(slots);
 
   apptsByPriority.forEach(function(applicantList, priority) {
-    console.log("Priority: " + priority);
     let shuffledAppointments = shuffle(applicantList);
     const availabilities = new Map();
     shuffledAppointments.forEach(function(applicant) {
@@ -180,8 +176,6 @@ function scheduleAppointmentsByPriority(apptsByPriority) {
         }
       }
     });
-    console.log("Applicant availabilities by slot: ");
-    console.log(availabilities);
     while (availabilities.size > 0) {
       // availabilities contains all submission ids available for each time slot
       // sort according to how many people are available for each slot, ascending
@@ -233,8 +227,6 @@ function scheduleAppointmentsByPriority(apptsByPriority) {
         }
       });
     }
-    console.log("Appointments scheduled for priority " + priority);
-    console.log(scheduledAppointments);
   });
 
   // after scheduling is complete, count how many we were able to schedule
@@ -267,10 +259,68 @@ function showFollowupOptions(scheduledAppointments) {
   setTimeout(function() {
     $('.all-container').css('margin-top', -220);
     $('.followups').css('display', 'flex');
+
+    // add click handlers to followup buttons
+    // var downloadFunction = downloadResultsPDF.bind(this, scheduledAppointments);
+    scheduledAppointmentsGLOBAL = scheduledAppointments;
+    let downloadFunction = downloadResultsPDF.bind(this, scheduledAppointments);
+    let pdfButton = $('#export-pdf-button');
+    pdfButton.click(downloadFunction);
   }, 7000);
   setTimeout(function() {
     $('.followups').addClass('show');
   }, 8000)
+}
+
+function downloadResultsPDF(scheduledAppointments) {
+    let doc = new jsPDF();
+    doc.setFont('courier');
+
+    // add header
+    doc.setFontSize(18);
+    doc.setTextColor(42, 42, 42);
+    doc.text('Scheduled Appointments', 10, 20);
+    doc.line(10, 25, 100, 25);
+
+    let pos = 0;
+    let countAppointmentsDisplayed = 0;
+    scheduledAppointments.forEach(function(appointment, slot) {
+      if (countAppointmentsDisplayed !== 0 && countAppointmentsDisplayed % 3 === 0) {
+        doc.addPage();
+        pos = 0;
+      }
+      let beginningOfSectionPos = 35 + pos * 5; 
+
+      // info about time slot
+      let slotSplit = slot.split(">>");
+      let slotReadable = slotSplit[1] + ": " + slotSplit[2];
+      doc.setFontSize(12);
+      doc.setFontStyle('bold');
+      doc.setTextColor(42, 42, 42);
+      doc.text(slotReadable, 10, beginningOfSectionPos);
+
+      // info about appointment
+      doc.setFontSize(10);
+      doc.setFontStyle('normal');
+      doc.text('FirstName LastName', 12, beginningOfSectionPos + 5);
+      doc.text(appointment['Submission ID'], 12, beginningOfSectionPos + 10);
+
+      // comments on appointment
+      let comments = appointment['ILLUSTRATIVE TATTOOS (Collection or Custom)- What would you like tattooed?'];
+      let commentsArray = [];
+      let index = 0;
+      while (comments.length > 0) {
+        commentsArray[index] = comments.substring(0, 90);
+        comments = comments.substring(90);
+        index++;
+      }
+      doc.text(commentsArray, 12, beginningOfSectionPos + 15)
+      pos+=(5 + commentsArray.length);
+
+      // increment this so we know when to start a new PDF page
+      countAppointmentsDisplayed++;
+    });
+    doc.save('test_jsPDF.pdf');
 }
 
 /**
