@@ -314,7 +314,17 @@ function downloadResultsPDF(scheduledAppointments) {
         comments = comments.substring(90);
         index++;
       }
+      // if comments are too long, truncate
+      if (commentsArray.length > 10) {
+        let lastComment = commentsArray[commentsArray.length - 1];
+        commentsArray = commentsArray.slice(0, 10);
+        commentsArray[10] = '...(comments truncated during export)...';
+        commentsArray[11] = lastComment;
+      }
+      // append comment
       doc.text(commentsArray, 12, beginningOfSectionPos + 15)
+
+      // move pointer to accomodate length of section and length of commenta
       pos+=(5 + commentsArray.length);
 
       // increment this so we know when to start a new PDF page
